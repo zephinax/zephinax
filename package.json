@@ -1,0 +1,21 @@
+{
+  "name": "zephinax",
+  "version": "1.0.0",
+  "description": "CLI portfolio for Zephinax. Fetches live profile data and prints it to the terminal.",
+  "bin": {
+    "zephinax": "bin/index.js"
+  },
+  "files": [
+    "bin"
+  ],
+  "keywords": [
+    "portfolio",
+    "cli",
+    "zephinax"
+  ],
+  "author": "Zephinax <zephinax@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}
