@@ -13,6 +13,8 @@ const color = {
   dim: (str) => `\x1b[2m${str}\x1b[0m`
 };
 
+const CONTENT_MARGIN = 1;
+
 async function fetchProfile(url) {
   if (typeof fetch === "function") {
     const res = await fetch(url);
@@ -48,10 +50,6 @@ function clean(text) {
     .replace(/^>\s?/gm, "") // strip block quotes
     .replace(/\r?\n\s*/g, "\n") // normalize whitespace
     .trim();
-}
-
-function line(label, value) {
-  return value ? `${color.yellow(label)} ${value}` : null;
 }
 
 function wrapText(text, width, indent) {
@@ -107,19 +105,26 @@ function boxBottom(width) {
 }
 
 function boxLine(text, width) {
-  const inner = Math.max(0, width - 4);
+  const inner = Math.max(0, width - 4 - CONTENT_MARGIN * 2);
   const content = text || "";
   const visLen = visibleLength(content);
   const needsTruncate = visLen > inner;
   const raw = needsTruncate ? `${stripAnsi(content).slice(0, inner - 1)}…` : content;
   const padding = Math.max(0, inner - visibleLength(raw));
-  return `│ ${raw}${" ".repeat(padding)} │`;
+  const margin = " ".repeat(CONTENT_MARGIN);
+  return `│ ${margin}${raw}${" ".repeat(padding)}${margin} │`;
 }
 
 function boxDivider(label, width) {
   const tag = label ? ` ${label.toUpperCase()} ` : "";
   const lineLen = Math.max(0, width - 2 - tag.length);
   return `├${tag}${divider("─", lineLen)}┤`;
+}
+
+function fieldLine(label, value, width) {
+  if (!value) return null;
+  const labelText = `${label}:`.padEnd(8);
+  return boxLine(`${color.yellow(labelText)} ${value}`, width);
 }
 
 function render(profile) {
@@ -132,20 +137,22 @@ function render(profile) {
       : null;
 
   const width = Math.max(60, Math.min(process.stdout.columns || 80, 100));
-  const inner = Math.max(0, width - 4);
+  const contentWidth = Math.max(0, width - 4 - CONTENT_MARGIN * 2);
 
   const primary = color.cyan(header);
   const secondary = fullName ? color.dim(fullName) : null;
-  const roleLocation = [profile.jobTitle, profile.timeZone].filter(Boolean).join("  •  ");
-  const contact = [profile.email, profile.website].filter(Boolean).join("  •  ");
-  const aboutLines = about ? wrapText(about, inner - 2, 0) : [];
+  const aboutLines = about ? wrapText(about, contentWidth - 2, 0) : [];
 
   const lines = [
     boxTop("Profile", width),
     boxLine(primary, width),
     secondary ? boxLine(secondary, width) : null,
-    roleLocation ? boxLine(roleLocation, width) : null,
-    contact ? boxLine(contact, width) : null,
+    boxDivider("details", width),
+    fieldLine("Role", profile.jobTitle, width),
+    fieldLine("Timezone", profile.timeZone, width),
+    boxDivider("contact", width),
+    fieldLine("Email", profile.email, width),
+    fieldLine("Web", profile.website, width),
     aboutLines.length ? boxDivider("about", width) : null,
     ...aboutLines.map((l) => boxLine(l, width)),
     boxBottom(width)
