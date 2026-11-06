@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: List Workflow Runs
         id: list-runs
@@ -21,7 +21,7 @@ jobs:
           curl -s -H "Authorization: token $GITHUB_TOKEN" \
           "https://api.github.com/repos/${{ github.repository }}/actions/runs?status=success" \
           > runs.json
-          echo "::set-output name=run_ids::$(jq -c '[.workflow_runs[].id]' runs.json)"
+          echo "run_ids=$(jq -c '[.workflow_runs[].id]' runs.json)" >> "$GITHUB_OUTPUT"
 
       - name: Delete Workflow Runs
         if: steps.list-runs.outputs.run_ids != '[]'

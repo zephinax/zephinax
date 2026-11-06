@@ -1,7 +1,7 @@
 {
   "name": "zephinax",
-  "version": "1.0.0",
-  "description": "CLI portfolio for Zephinax. Fetches live profile data and prints it to the terminal.",
+  "version": "1.1.0",
+  "description": "Interactive CLI portfolio and CV for Amirali Rajabi (Zephinax).",
   "bin": {
     "zephinax": "bin/index.js"
   },
@@ -11,10 +11,22 @@
   "keywords": [
     "portfolio",
     "cli",
-    "zephinax"
+    "cv",
+    "resume",
+    "zephinax",
+    "terminal-card",
+    "interactive"
   ],
   "author": "Zephinax <zephinax@gmail.com>",
   "license": "MIT",
+  "homepage": "https://zephinax.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zephinax/zephinax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zephinax/zephinax/issues"
+  },
   "engines": {
     "node": ">=18"
   }
